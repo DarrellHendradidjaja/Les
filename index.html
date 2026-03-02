@@ -103,12 +103,119 @@ footer{
     </ul>
 </div>
 
-<!-- Sisa bagian tetap sama seperti sebelumnya -->
+<div class="card">
+    <h2>Jenis Kelas</h2>
+
+    <h3>Material + Latsol (Stage 1)</h3>
+    <div class="price">150rb • 4x 1 jam 30 menit</div>
+    <ul>
+        <li>Seluruh materi semester 2 mapel di kurikulum merdeka</li>
+        <li>Latihan soal per topik</li>
+        <li>Grup WA Diskusi</li>
+    </ul>
+
+    <h3>Complete (Stage 2)</h3>
+    <div class="price">200rb • 6x 1 jam 30 menit</div>
+    <ul>
+        <li>Stage 1</li>
+        <li>Latihan Soal Campuran</li>
+        <li>Tryout ASAT</li>
+        <li>Hadiah Cash Rank 1–3 Tryout (minimal 20 orang ikut)</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Syarat & Ketentuan</h2>
+    <ul>
+        <li>Bayar sebelum 29 Maret</li>
+        <li>Punya peralatan & koneksi baik untuk Zoom</li>
+        <li>Kelas 9 untuk review boleh ikut</li>
+        <li>Minimal 10 orang per kelas</li>
+        <li>Jika kuota tidak memenuhi maka akan di-refund</li>
+        <li>Konfirmasi bukti pembayaran ke WA admin</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Diskon Kolektif</h2>
+    <ul>
+        <li>10 orang: 10rb/orang</li>
+        <li>20 orang: 20rb/orang</li>
+        <li>Pendaftaran kolektif per mapel dan tingkat (7/8)</li>
+        <li>Diskon hanya berlaku untuk paket Complete</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Kalender Jadwal Kelas (30 Maret – 31 Mei)</h2>
+
+    Pilih Mapel:
+    <select id="mapel" onchange="generateCalendars()">
+        <option value="1">MTK 7 (Senin)</option>
+        <option value="2">MTK 8 (Selasa)</option>
+        <option value="3">Fisika 7 (Rabu)</option>
+        <option value="4">Fisika 8 (Kamis)</option>
+        <option value="5">Bio 7 (Jumat)</option>
+        <option value="6">Bio 8 (Sabtu)</option>
+    </select>
+
+    <div class="calendar" id="calendarContainer"></div>
+</div>
+
+</div>
 
 <footer>
     Admin: Darrell H. • 082218781810 <br>
     Kelas dimulai pada 30 Maret
 </footer>
+
+<script>
+function generateMonth(year, month, dayTarget, startDate=null){
+    let firstDay = new Date(year, month, 1);
+    let lastDate = new Date(year, month+1, 0).getDate();
+
+    let table = "<h3>"+ firstDay.toLocaleString('id-ID',{month:'long'}) +"</h3>";
+    table += "<table><tr>";
+    const days = ["Min","Sen","Sel","Rab","Kam","Jum","Sab"];
+    for(let d of days){ table += "<th>"+d+"</th>"; }
+    table += "</tr><tr>";
+
+    for(let i=0;i<firstDay.getDay();i++){ table += "<td></td>"; }
+
+    for(let date=1; date<=lastDate; date++){
+        let current = new Date(year, month, date);
+        let className = "";
+
+        if(current.getDay()==dayTarget){
+            if(!startDate || current >= startDate){
+                className="schedule-day";
+            }
+        }
+
+        table += `<td class="${className}">${date}</td>`;
+
+        if(current.getDay()==6){ table+="</tr><tr>"; }
+    }
+
+    table+="</tr></table>";
+    return table;
+}
+
+function generateCalendars(){
+    const dayTarget = parseInt(document.getElementById("mapel").value);
+    const year = new Date().getFullYear();
+    const startDate = new Date(year,2,30); // 30 Maret
+
+    let output = "";
+    output += generateMonth(year,2,dayTarget,startDate); // Maret
+    output += generateMonth(year,3,dayTarget); // April
+    output += generateMonth(year,4,dayTarget); // Mei
+
+    document.getElementById("calendarContainer").innerHTML = output;
+}
+
+generateCalendars();
+</script>
 
 </body>
 </html>
