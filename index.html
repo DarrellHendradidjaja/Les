@@ -182,7 +182,17 @@ footer{
 </footer>
 
 <script>
-function generateMonth(year, month, dayTarget, startDate=null){
+// Mapping mapel ke hari 0=Min,1=Sen,...6=Sab
+const mapelDays = {
+    1:1, // MTK7 Senin
+    2:2, // MTK8 Selasa
+    3:3, // Fisika7 Rabu
+    4:4, // Fisika8 Kamis
+    5:5, // Bio7 Jumat
+    6:6  // Bio8 Sabtu
+};
+
+function generateMonth(year, month, dayTarget, startDate=null, maxSessions=6){
     let firstDay = new Date(year, month, 1);
     let lastDate = new Date(year, month+1, 0).getDate();
     let table = "<h3>"+ firstDay.toLocaleString('id-ID',{month:'long'}) +"</h3>";
@@ -191,30 +201,38 @@ function generateMonth(year, month, dayTarget, startDate=null){
     for(let d of days){ table += "<th>"+d+"</th>"; }
     table += "</tr><tr>";
 
+    let sessionCount=0;
     for(let i=0;i<firstDay.getDay();i++){ table += "<td></td>"; }
 
     for(let date=1; date<=lastDate; date++){
         let current = new Date(year, month, date);
         let className = "";
-        if(current.getDay()==dayTarget){
-            if(!startDate || current >= startDate){ className="schedule-day"; }
+
+        if(sessionCount<maxSessions && current.getDay()==dayTarget){
+            if(!startDate || current >= startDate){
+                className="schedule-day";
+                sessionCount++;
+            }
         }
+
         table += `<td class="${className}">${date}</td>`;
         if(current.getDay()==6){ table+="</tr><tr>"; }
     }
-
     table+="</tr></table>";
     return table;
 }
 
 function generateCalendars(){
-    const dayTarget = parseInt(document.getElementById("mapel").value);
+    const mapelSelect = parseInt(document.getElementById("mapel").value);
+    const dayTarget = mapelDays[mapelSelect];
     const year = new Date().getFullYear();
     const startDate = new Date(year,2,30); // 30 Maret
+
     let output = "";
-    output += generateMonth(year,2,dayTarget,startDate); // Maret
-    output += generateMonth(year,3,dayTarget); // April
-    output += generateMonth(year,4,dayTarget); // Mei
+    output += generateMonth(year,2,dayTarget,startDate,6); // Maret
+    output += generateMonth(year,3,dayTarget, null, 6);   // April
+    output += generateMonth(year,4,dayTarget, null, 6);   // Mei
+
     document.getElementById("calendarContainer").innerHTML = output;
 }
 
